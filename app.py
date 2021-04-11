@@ -53,14 +53,6 @@ def index():
     messages = result.fetchall()
     return render_template("index.html", count=count, messages=messages)
 
-#@app.route("/listingredients")
-#def listingredients():
-#    result = db.session.execute("SELECT COUNT(*) FROM ingredients")
-#    count = result.fetchone()[0]
-#    result = db.session.execute("SELECT ingredient FROM ingredient")
-#    ingredients = result.fetchall()
-#    return render_template("listingredients.html", count=count, ingredients=ingredients)
-
 @app.route("/new")
 def new():
     return render_template("new.html")
@@ -72,3 +64,33 @@ def send():
     db.session.execute(sql, {"content":content})
     db.session.commit()
     return redirect("/")
+
+@app.route("/listingredients")
+def listingredients():
+    result = db.session.execute("SELECT COUNT(*) FROM ingredients")
+    count = result.fetchone()[0]
+    result = db.session.execute("SELECT ingredient FROM ingredients")
+    ingredients = result.fetchall()
+    return render_template("listingredients.html", count=count, ingredients=ingredients)
+
+@app.route("/newingredient")
+def newingredient():
+    return render_template("newingredient.html")
+
+@app.route("/sendingredient", methods=["POST"])
+def sendingredient():
+    #ingredient = request.form["ingredient"]
+    #price = request.form["price"]
+    sql = "INSERT INTO ingredients (ingredient, price, amount) VALUES ('testi', 1, 1)"
+    db.session.execute(sql)
+    db.session.commit()
+    return redirect("/")
+
+#@app.route("/sendingredient", methods=["POST"])
+#def sendingredient():
+#    ingredient = request.form["ingredient"]
+#    price = request.form["price"]
+#    sql = "INSERT INTO ingredients (ingredient, price, amount) VALUES (:ingredient, :price)"
+#    db.session.execute(sql, {"ingredient":ingredient, "price":price})
+#    db.session.commit()
+#    return redirect("/")
