@@ -1,9 +1,11 @@
 from flask import Flask
 from flask import redirect, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from os import getenv
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///lasse"
+#getenv("DATABASE_URL") # "postgresql:///lasse"
 db = SQLAlchemy(app)
 
 
@@ -47,6 +49,7 @@ def result():
 
 @app.route("/")
 def index():
+    return redirect("/listingredients")
     result = db.session.execute("SELECT COUNT(*) FROM messages")
     count = result.fetchone()[0]
     result = db.session.execute("SELECT content FROM messages")
@@ -79,12 +82,13 @@ def newingredient():
 
 @app.route("/sendingredient", methods=["POST"])
 def sendingredient():
-    #ingredient = request.form["ingredient"]
-    #price = request.form["price"]
-    sql = "INSERT INTO ingredients (ingredient, price, amount) VALUES ('testi', 1, 1)"
-    db.session.execute(sql)
+    ingredient = request.form["ingredient"]
+    price = request.form["price"]
+    amount = request.form["amount"]
+    sql = "INSERT INTO ingredients (ingredient, price, amount) VALUES (:ingredient, :price, :amount)"
+    db.session.execute(sql, {"ingredient":ingredient, "price":price, "amount":amount })
     db.session.commit()
-    return redirect("/")
+    return redirect("/listingredients")
 
 #@app.route("/sendingredient", methods=["POST"])
 #def sendingredient():
