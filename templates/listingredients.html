@@ -1,0 +1,7 @@
+Ruoka-aineita tietokannassa: {{ count }}
+<hr>
+{% for ingredient in ingredients %}
+{{ ingredient[0] }}
+<hr>
+{% endfor %}
+<a href="/new">Lisää ruoka-aine</a>
