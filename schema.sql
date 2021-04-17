@@ -40,3 +40,8 @@ filter_id INT REFERENCES recipes(id),
 ingredient_id INT REFERENCES ingredients(id)
 );
 
+CREATE TABLE users (
+id SERIAL PRIMARY KEY,
+username TEXT UNIQUE,
+password_hash TEXT
+)
