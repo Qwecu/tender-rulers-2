@@ -8,6 +8,10 @@
     Pakkauskoko:
     <input type="text" name="amount">
     <br>
+    Yksikkö:
+    {% for unit in units %}
+    <input type="radio" name="unitradio" value= {{unit[0]}}> {{unit[1]}}
+    {% endfor %}
+    <br>
     <input type="submit" value="Lähetä">
     </form>
-    

@@ -81,15 +81,18 @@ def listingredients():
 
 @app.route("/newingredient")
 def newingredient():
-    return render_template("newingredient.html")
+    result = db.session.execute("select id, name from measureunit")
+    units = result.fetchall()
+    return render_template("newingredient.html", units = units)
 
 @app.route("/sendingredient", methods=["POST"])
 def sendingredient():
     ingredient = request.form["ingredient"]
     price = request.form["price"]
     amount = request.form["amount"]
-    sql = "INSERT INTO ingredients (ingredient, price, amount) VALUES (:ingredient, :price, :amount)"
-    db.session.execute(sql, {"ingredient":ingredient, "price":price, "amount":amount })
+    unit = request.form["unitradio"]
+    sql = "INSERT INTO ingredients (ingredient, price, amount, measureunit_id) VALUES (:ingredient, :price, :amount, :unit)"
+    db.session.execute(sql, {"ingredient":ingredient, "price":price, "amount":amount, "unit":unit })
     db.session.commit()
     return redirect("/listingredients")
 

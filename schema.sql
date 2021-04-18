@@ -3,20 +3,27 @@ id SERIAL PRIMARY KEY,
 name TEXT
 );
 
+INSERT INTO measureunit (name)
+VALUES
+('kg'), ('l')
+;
+
 CREATE TABLE ingredients (
 id SERIAL PRIMARY KEY,
 ingredient TEXT,
 price NUMERIC(6, 2),
 amount NUMERIC(6, 4),
-measureunit_id INT REFERENCES measureunit(id),
+measureunit_id INT NOT NULL REFERENCES measureunit(id),
 priceperunit NUMERIC GENERATED ALWAYS AS (price / amount) STORED
 );
 
-INSERT INTO ingredients (ingredient, price, amount)
+INSERT INTO ingredients (ingredient, price, amount, measureunit_id)
 VALUES
-('pipari', 1.5, 0.3),
-('punaiset linssit', 1.4, 0.4),
-('punaviini', 14.2, 0.75)
+('pipari', 1.5, 0.3, 1),
+('punaiset linssit', 1.4, 0.4, 1),
+('punaviini', 14.2, 0.75, 2),
+('pecorino', 3.8, 0.180, 1),
+('greippimehu', 2.2, 1, 2)
 ;
 
 CREATE TABLE recipes (
@@ -44,4 +51,4 @@ CREATE TABLE users (
 id SERIAL PRIMARY KEY,
 username TEXT UNIQUE,
 password_hash TEXT
-)
+);

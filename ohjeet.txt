@@ -26,3 +26,6 @@ When you need to connect to database from code, use socket in
 /home/lasse/pgsql/sock
 with default database name and no need to give username or password. Please
 do not hardcode this into your code, this connection will only work for you.
+
+
+select 'drop table "' || tablename || '" cascade;' from pg_tables;
