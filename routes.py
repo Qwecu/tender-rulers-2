@@ -75,7 +75,7 @@ def send():
 def listingredients():
     result = db.session.execute("SELECT COUNT(*) FROM ingredients")
     count = result.fetchone()[0]
-    result = db.session.execute("SELECT ingredient FROM ingredients")
+    result = db.session.execute("select CONCAT(ingredient, ' ', price::text, ' € (', priceperunit::NUMERIC(6, 2)::text, ' €/', measureunit.name, ')') from ingredients left join measureunit on measureunit.id = ingredients.measureunit_id")
     ingredients = result.fetchall()
     return render_template("listingredients.html", count=count, ingredients=ingredients)
 
