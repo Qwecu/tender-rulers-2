@@ -42,10 +42,15 @@ id SERIAL PRIMARY KEY,
 name TEXT
 );
 
+insert into filter (name) values ('vegan');
+
 CREATE TABLE filter_ingredient (
-filter_id INT REFERENCES recipes(id),
+filter_id INT REFERENCES filter(id),
 ingredient_id INT REFERENCES ingredients(id)
 );
+
+insert into filter_ingredient (filter_id, ingredient_id) VALUES (1, 2);
+insert into filter_ingredient (filter_id, ingredient_id) VALUES (1, 5);
 
 CREATE TABLE users (
 id SERIAL PRIMARY KEY,

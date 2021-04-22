@@ -6,6 +6,8 @@ from os import getenv
 
 from db import db
 import users
+import random
+import math
 #app.secret_key = getenv("SECRET_KEY")
 
 
@@ -75,7 +77,11 @@ def send():
 def listingredients():
     result = db.session.execute("SELECT COUNT(*) FROM ingredients")
     count = result.fetchone()[0]
-    result = db.session.execute("select CONCAT(ingredient, ' ', price::text, ' € (', priceperunit::NUMERIC(6, 2)::text, ' €/', measureunit.name, ')') from ingredients left join measureunit on measureunit.id = ingredients.measureunit_id")
+    result = db.session.execute("\
+        select CONCAT(ingredient, ' ', price::text, ' € (', priceperunit::NUMERIC(6, 2)::text, ' €/', measureunit.name, ')') \
+        from ingredients \
+        left join measureunit on measureunit.id = ingredients.measureunit_id \
+        order by ingredient")
     ingredients = result.fetchall()
     return render_template("listingredients.html", count=count, ingredients=ingredients)
 
@@ -112,3 +118,44 @@ def login():
 def logout():
     users.logout()
     return redirect("/")
+
+@app.route("/generaterecipe")
+def generaterecipe():
+    return render_template("generaterecipe.html")
+
+@app.route("/generaterecipepost", methods=["POST"])
+def generaterecipepost():
+    budget = float(request.form["budget"])
+    max_ingredient_amount = int(math.sqrt(random.random() * 80) + 1)
+    #result = db.session.execute("SELECT COUNT(*) FROM ingredients")
+    #count = result.fetchone()[0]
+    strjoin = ""
+
+    strj = "	INNER JOIN filter_ingredient a1 ON a1.ingredient_id = ingredients.id "
+
+    stringsql = \
+        "SELECT * " + \
+        "FROM  ( " + \
+        " SELECT DISTINCT 1 + trunc(random() *  " + \
+        "   (select COUNT(*) from ingredients " + \
+        strjoin + \
+        "	) " + \
+        " )::integer AS id " + \
+        " FROM   generate_series(1, :max_ingredient_amount) g " + \
+        " ) r " + \
+        " JOIN    " + \
+        "( " + \
+        "select ROW_NUMBER () OVER (ORDER BY id) as id, ingredient, id as originalid, price from ingredients " + \
+        strjoin + \
+        ") validfoods " + \
+        "USING (id); "
+    
+    recipe = db.session.execute(stringsql,{"max_ingredient_amount": max_ingredient_amount})
+
+    cheapestprice = 0
+    cheapestindex = 0
+
+    #for 
+
+    return render_template("showrecipe.html", items = recipe)
+    return str(ingredient_amount)
