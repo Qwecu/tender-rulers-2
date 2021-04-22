@@ -152,10 +152,47 @@ def generaterecipepost():
     
     recipe = db.session.execute(stringsql,{"max_ingredient_amount": max_ingredient_amount})
 
-    cheapestprice = 0
+    
+    weights = []
+    weightsum = 0
+
+    rowcount = recipe.rowcount
+
+    #return str(rowcount)
+
+
+    
+    for r in range(rowcount):
+        weight = random.randint(1,10)
+        weights.append(weight)
+        weightsum += weight
+
+    modifier = 1 / (weightsum * 1.0 / budget)
+
+    totalprice = 0
     cheapestindex = 0
+    cheapestprice = 0
+    weighedrecipe = []
 
-    #for 
+    #return "weightsum " + str(weightsum) + " reco " + str(reco) + " modifier " + str(modifier)
+    test = "TEST: "
 
-    return render_template("showrecipe.html", items = recipe)
-    return str(ingredient_amount)
+    currentindex = 0
+    for food in recipe:
+        if food[3] < cheapestprice or cheapestprice == 0:
+            cheapestprice = food[3]
+            cheapestindex = currentindex
+
+        individualbudget = modifier * weights[currentindex]
+        count = int(individualbudget / float(food[3]))
+        totalprice += count * food[3]
+        weighedrecipe.append([food[0], food[1], food[2], food[3], count])
+        #test += (str(food[0]) + " " + str(food[1]) + " " + str(food[2]) + " " + str(food[3]) + " " + str(count) + "\n")
+
+
+        currentindex = currentindex + 1
+        
+    #return test + " currentindex : " + str(currentindex)
+
+    return render_template("showrecipe.html", items = weighedrecipe, totalprice = totalprice)
+    #return str(ingredient_amount)

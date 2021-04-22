@@ -1,4 +1,4 @@
-{{count}}
+{{totalprice}}
 <hr>
 {% for item in items %}
 <i>Id:</i> {{ item[0] }}
@@ -8,5 +8,7 @@
 <i>Määrä:</i> {{ item[2] }}
 <p>
 <i>Kokonaishinta:</i> {{ item[3] }}
+<p>
+<i>Oikeesti määrä:</i> {{ item[4] }}
 <hr>
 {% endfor %}
