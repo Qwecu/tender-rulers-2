@@ -1,14 +1,17 @@
-{{totalprice}}
+{% extends "layout.html" %}
+{% block title %}Näytä ostoslista{% endblock %}
+{% block content %}
+Kokonaishinta: {{totalprice}}
 <hr>
 {% for item in items %}
-<i>Id:</i> {{ item[0] }}
-<p>
 <i>Asia:</i> {{ item[1] }}
 <p>
-<i>Määrä:</i> {{ item[2] }}
+<i>Id:</i> {{ item[2] }}
 <p>
-<i>Kokonaishinta:</i> {{ item[3] }}
+<i>Kappalehinta:</i> {{ item[3] }}
 <p>
-<i>Oikeesti määrä:</i> {{ item[4] }}
+<i>Lukumäärä:</i> {{ item[4] }}
 <hr>
 {% endfor %}
+
+{% endblock %}

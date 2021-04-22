@@ -1,6 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}Uusi ostoslista{% endblock %}
+{% block content %}
 <form action="/newrecipe" method="POST">
-    <p>Anna reseptille nimi:<br>
-    <input type="text" name="recipe"></p>
-    <ul></ul>
-    <input type="submit" value="Tallenna">
-    </form>
+<p>Anna reseptille nimi:<br>
+<input type="text" name="recipe"></p>
+<ul></ul>
+<input type="submit" value="Tallenna">
+</form>
+{% endblock %}

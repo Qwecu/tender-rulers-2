@@ -1,0 +1,21 @@
+<!doctype html>
+<title>Gourmet Helper - {% block title %}{% endblock %}</title>
+<h1>Gourmet Helper</h1>
+<a href="/">Etusivu</a>
+{% if session.username %}
+<p>Olet kirjautunut nimellä {{ session.username }}</p>
+<a href="/logout">Kirjaudu ulos</a>
+<a href="/generaterecipe">Luo ostoslista</a>
+<a href="/listingredients">Näytä tietokannassa olevat ruoka-aineet ja lisää uusia</a>
+{% else %}
+<form action="/login" method="POST">
+<p>Tunnus:<br>
+<input type="text" name="username"></p>
+<p>Salasana:<br>
+<input type="password" name="password"></p>
+<input type="submit" value="Kirjaudu">
+</form>
+{% endif %}
+<hr>
+{% block content %}{% endblock %}
+<hr>
