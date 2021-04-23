@@ -7,7 +7,9 @@
 <a href="/logout">Kirjaudu ulos</a>
 <a href="/generaterecipe">Luo ostoslista</a>
 <a href="/listingredients">Näytä tietokannassa olevat ruoka-aineet ja lisää uusia</a>
-{% else %}
+{%endif%}
+<a href="/recipes">Selaa ostoslistoja</a>
+{%if not session.username %}
 <form action="/login" method="POST">
 <p>Tunnus:<br>
 <input type="text" name="username"></p>

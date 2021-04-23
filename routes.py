@@ -54,12 +54,9 @@ def form():
 def result():
     return render_template("result.html",name=request.form["name"])
 
-
-
 @app.route("/")
 def index():
     return render_template("index.html")
-    return redirect("/listingredients")
 
 @app.route("/new")
 def new():
@@ -201,40 +198,57 @@ def generaterecipepost():
     return render_template("showrecipe.html", items = weighedrecipe, totalprice = totalprice, count = rowcount)
     #return str(ingredient_amount)
 
+@app.route("/showrecipe/<int:id>")
+def showexistingrecipe(id):
+    sql = """SELECT name, SUM(count * price)
+    FROM recipes r
+    INNER JOIN recipes_ingredients on r.id = recipe_id
+    INNER JOIN ingredients i on i.id = ingredient_id
+    WHERE r.id = :id
+    GROUP BY name"""
+
+    result = db.session.execute(sql, {"id":id}).fetchone()
+    name = result[0]
+    price = result[1]
+
+    sql = """SELECT 0, ingredient, 0, price, count
+    FROM recipes r
+    INNER JOIN recipes_ingredients on r.id = recipe_id
+    INNER JOIN ingredients i on i.id = ingredient_id
+    WHERE r.id = :id"""
+
+    result = db.session.execute(sql, {"id":id})
+    return render_template("showrecipe.html", items = result, recipe_name = name,  totalprice = price)
+
 @app.route("/sendrecipe", methods=["POST"])
 def sendrecipe():
-    print("1")
     ic = request.form["count"]
-    print("count: " + ic)
     ingredientcount = int(ic)
-    print("2")
     name = request.form["name"]
-    print("3")
 
     sql = "INSERT INTO recipes (name) VALUES (:name) RETURNING id; "
-    print(sql)
     result = db.session.execute(sql, {"name":name})
-    print("results!")
     recipe_id = result.fetchone()[0]
-    print("recipeid: " + str(recipe_id))
     sql = "INSERT INTO recipes_ingredients (recipe_id, ingredient_id, count) VALUES "
 
     for x in range(ingredientcount):
         i = str(x + 1)
-        print("index is " + str(i))
-        ss = "hiddenId" + i
-        print("searching for " + ss)
-        idtemp = request.form["hiddenId" + i]
-        print(idtemp)
         id = str(int(request.form["hiddenId" + i]))
-        print("id is " + id)
         count = str(int(request.form["hiddenCount" + i]))
-        print("id is " + count)
         sql += (" (" + ":recipe_id, " + id + ", " + count + ")")
         if(x < (ingredientcount - 1)):
             sql += ","
 
-    print(sql)
     db.session.execute(sql, {"recipe_id":recipe_id})
     db.session.commit()
-    return render_template("index.html", error = "Ostoslista tallennettu")
+    return render_template("index.html", message = "Ostoslista tallennettu")
+
+@app.route("/recipes")
+def recipes():
+    result = db.session.execute("SELECT COUNT(*) FROM recipes")
+    count = result.fetchone()[0]
+    result = db.session.execute("""
+        SELECT id, name FROM recipes
+    """)
+    recipes = result.fetchall()
+    return render_template("recipes.html", count=count, recipes=recipes)
