@@ -2,9 +2,14 @@
 {% block title %}Näytä ostoslista{% endblock %}
 {% block content %}
 Kokonaishinta: {{totalprice}}
+<form action="/sendrecipe" method="POST">
+Anna reseptille nimi:
+<input type="text" name="name">
+<input type="submit" value="Tallenna resepti">
+<input id="count" name="count" type="hidden" value={{count}}>
 <hr>
 {% for item in items %}
-<i>Asia:</i> {{ item[1] }}
+<i>Tuote:</i> {{ item[1] }}
 <p>
 <i>Id:</i> {{ item[2] }}
 <p>
@@ -12,6 +17,8 @@ Kokonaishinta: {{totalprice}}
 <p>
 <i>Lukumäärä:</i> {{ item[4] }}
 <hr>
+<input id="hiddenCount{{item[5]}}" name="hiddenCount{{item[5]}}" type="hidden" value={{ item[4] }}>
+<input id="hiddenId{{item[5]}}" name="hiddenId{{item[5]}}" type="hidden" value={{ item[5] }}>
 {% endfor %}
-
+</form>
 {% endblock %}

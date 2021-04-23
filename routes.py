@@ -89,7 +89,9 @@ def listingredients():
 def newingredient():
     result = db.session.execute("select id, name from measureunit")
     units = result.fetchall()
-    return render_template("newingredient.html", units = units)
+    result = db.session.execute("select id, name from filter")
+    filters = result.fetchall()
+    return render_template("newingredient.html", units = units, filters = filters)
 
 @app.route("/sendingredient", methods=["POST"])
 def sendingredient():
@@ -97,6 +99,8 @@ def sendingredient():
     price = request.form["price"]
     amount = request.form["amount"]
     unit = request.form["unitradio"]
+    #sql
+
     sql = "INSERT INTO ingredients (ingredient, price, amount, measureunit_id) VALUES (:ingredient, :price, :amount, :unit)"
     db.session.execute(sql, {"ingredient":ingredient, "price":price, "amount":amount, "unit":unit })
     db.session.commit()
@@ -134,7 +138,7 @@ def generaterecipepost():
     strj = "	INNER JOIN filter_ingredient a1 ON a1.ingredient_id = ingredients.id "
 
     stringsql = \
-        "SELECT * " + \
+        "SELECT *, ROW_NUMBER() OVER (ORDER by id) as htmlid " + \
         "FROM  ( " + \
         " SELECT DISTINCT 1 + trunc(random() *  " + \
         "   (select COUNT(*) from ingredients " + \
@@ -148,7 +152,8 @@ def generaterecipepost():
         "select ROW_NUMBER () OVER (ORDER BY id) as id, ingredient, id as originalid, price from ingredients " + \
         strjoin + \
         ") validfoods " + \
-        "USING (id); "
+        "USING (id) " \
+        "ORDER BY id; "
     
     recipe = db.session.execute(stringsql,{"max_ingredient_amount": max_ingredient_amount})
 
@@ -158,10 +163,6 @@ def generaterecipepost():
 
     rowcount = recipe.rowcount
 
-    #return str(rowcount)
-
-
-    
     for r in range(rowcount):
         weight = random.randint(1,10)
         weights.append(weight)
@@ -186,13 +187,54 @@ def generaterecipepost():
         individualbudget = modifier * weights[currentindex]
         count = int(individualbudget / float(food[3]))
         totalprice += count * food[3]
-        weighedrecipe.append([food[0], food[1], food[2], food[3], count])
+        weighedrecipe.append([food[0], food[1], food[2], food[3], count, food[4]])
         #test += (str(food[0]) + " " + str(food[1]) + " " + str(food[2]) + " " + str(food[3]) + " " + str(count) + "\n")
 
 
         currentindex = currentindex + 1
         
-    #return test + " currentindex : " + str(currentindex)
+    #moneyleft = budget - totalprice
+    #if cheapestprice > 0:
+        #morestuffamount = weighedrecipe[cheapestindex]
+        #TODO add more stuff to the list to better utilize budget
 
-    return render_template("showrecipe.html", items = weighedrecipe, totalprice = totalprice)
+    return render_template("showrecipe.html", items = weighedrecipe, totalprice = totalprice, count = rowcount)
     #return str(ingredient_amount)
+
+@app.route("/sendrecipe", methods=["POST"])
+def sendrecipe():
+    print("1")
+    ic = request.form["count"]
+    print("count: " + ic)
+    ingredientcount = int(ic)
+    print("2")
+    name = request.form["name"]
+    print("3")
+
+    sql = "INSERT INTO recipes (name) VALUES (:name) RETURNING id; "
+    print(sql)
+    result = db.session.execute(sql, {"name":name})
+    print("results!")
+    recipe_id = result.fetchone()[0]
+    print("recipeid: " + str(recipe_id))
+    sql = "INSERT INTO recipes_ingredients (recipe_id, ingredient_id, count) VALUES "
+
+    for x in range(ingredientcount):
+        i = str(x + 1)
+        print("index is " + str(i))
+        ss = "hiddenId" + i
+        print("searching for " + ss)
+        idtemp = request.form["hiddenId" + i]
+        print(idtemp)
+        id = str(int(request.form["hiddenId" + i]))
+        print("id is " + id)
+        count = str(int(request.form["hiddenCount" + i]))
+        print("id is " + count)
+        sql += (" (" + ":recipe_id, " + id + ", " + count + ")")
+        if(x < (ingredientcount - 1)):
+            sql += ","
+
+    print(sql)
+    db.session.execute(sql, {"recipe_id":recipe_id})
+    db.session.commit()
+    return render_template("index.html", error = "Ostoslista tallennettu")

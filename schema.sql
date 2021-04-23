@@ -43,6 +43,7 @@ name TEXT
 );
 
 insert into filter (name) values ('vegan');
+insert into filter (name) values ('K-18');
 
 CREATE TABLE filter_ingredient (
 filter_id INT REFERENCES filter(id),
@@ -51,6 +52,7 @@ ingredient_id INT REFERENCES ingredients(id)
 
 insert into filter_ingredient (filter_id, ingredient_id) VALUES (1, 2);
 insert into filter_ingredient (filter_id, ingredient_id) VALUES (1, 5);
+insert into filter_ingredient (filter_id, ingredient_id) VALUES (2, 3);
 
 CREATE TABLE users (
 id SERIAL PRIMARY KEY,
