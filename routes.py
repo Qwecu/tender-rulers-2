@@ -98,8 +98,25 @@ def sendingredient():
     unit = request.form["unitradio"]
     #sql
 
-    sql = "INSERT INTO ingredients (ingredient, price, amount, measureunit_id) VALUES (:ingredient, :price, :amount, :unit)"
-    db.session.execute(sql, {"ingredient":ingredient, "price":price, "amount":amount, "unit":unit })
+    sql = "INSERT INTO ingredients (ingredient, price, amount, measureunit_id) VALUES (:ingredient, :price, :amount, :unit) RETURNING id"
+    result = db.session.execute(sql, {"ingredient":ingredient, "price":price, "amount":amount, "unit":unit })
+    ingredientid = result.fetchone()[0]
+
+    sql = "SELECT id FROM filter"
+    result = db.session.execute(sql)
+
+    filters = request.form.getlist("filtercheck")
+
+    if(len(filters)) > 0:
+        sql = "INSERT INTO filter_ingredient (filter_id, ingredient_id)  VALUES "
+        for id in filters:
+            sql += "("
+            sql += str(int(id))
+            sql += ", :ingredientid)"
+        sql.replace(")(", "), (")
+        db.session.execute(sql,{"ingredientid":ingredientid})
+
+
     db.session.commit()
     return redirect("/listingredients")
 

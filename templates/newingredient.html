@@ -13,12 +13,12 @@ Pakkauskoko:
 <br>
 Yksikkö:
 {% for unit in units %}
-<input type="radio" name="unitradio" value= {{unit[0]}}> {{unit[1]}}
+<input type="radio" name="unitradio" value= {{unit[0]}} {%if unit[0] == 1%}checked{%endif%}> {{unit[1]}}
 {% endfor %}
 <br>
 Lisäehdot:
 {% for filter in filters %}
-<input type="checkbox" name="filtercheck" value= {{filter[0]}}> {{filter[1]}}
+<input type="checkbox" name="filtercheck" value ={{filter[0]}}> {{filter[1]}}
 {% endfor %}
 <br>
 <input type="submit" value="Lähetä">
