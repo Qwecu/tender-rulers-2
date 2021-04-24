@@ -100,27 +100,30 @@ def sendingredient():
     unit = request.form["unitradio"]
     #sql
 
-    sql = "INSERT INTO ingredients (ingredient, price, amount, measureunit_id) VALUES (:ingredient, :price, :amount, :unit) RETURNING id"
-    result = db.session.execute(sql, {"ingredient":ingredient, "price":price, "amount":amount, "unit":unit })
-    ingredientid = result.fetchone()[0]
+    try:
+        sql = "INSERT INTO ingredients (ingredient, price, amount, measureunit_id) VALUES (:ingredient, :price, :amount, :unit) RETURNING id"
+        result = db.session.execute(sql, {"ingredient":ingredient, "price":price, "amount":amount, "unit":unit })
+        ingredientid = result.fetchone()[0]
 
-    sql = "SELECT id FROM filter"
-    result = db.session.execute(sql)
+        sql = "SELECT id FROM filter"
+        result = db.session.execute(sql)
 
-    filters = request.form.getlist("filtercheck")
+        filters = request.form.getlist("filtercheck")
 
-    if(len(filters)) > 0:
-        sql = "INSERT INTO filter_ingredient (filter_id, ingredient_id)  VALUES "
-        for id in filters:
-            sql += "("
-            sql += str(int(id))
-            sql += ", :ingredientid)"
-        sql.replace(")(", "), (")
-        db.session.execute(sql,{"ingredientid":ingredientid})
+        if(len(filters)) > 0:
+            sql = "INSERT INTO filter_ingredient (filter_id, ingredient_id)  VALUES "
+            for id in filters:
+                sql += "("
+                sql += str(int(id))
+                sql += ", :ingredientid)"
+            sql.replace(")(", "), (")
+            db.session.execute(sql,{"ingredientid":ingredientid})
 
 
-    db.session.commit()
-    return redirect("/listingredients")
+        db.session.commit()
+        return redirect("/listingredients")
+    except:
+        return render_template("index.html", error= "Tapahtui virhe. Huomaathan, että ainesosaa ei saa olla ennestään tietokannassa ja sen hinnan on oltava yli 0.")
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -148,10 +151,15 @@ def generaterecipe():
 
 @app.route("/generaterecipepost", methods=["POST"])
 def generaterecipepost():
-    print("generaterecipepost")
     if users.loggedin() == False:
         return render_template("index.html", error="Tämä ominaisuus on vain kirjautuneille käyttäjille")
-    budget = float(request.form["budget"])
+    try:
+        budget = float(request.form["budget"])
+    except:
+        return render_template("index.html", error="Anna budjetti numeroina, desimaalierottimena piste")    
+    if (budget <= 0):
+        return render_template("index.html", error="Noin halvalla et ikävä kyllä voi päästä")
+
     max_ingredient_amount = int(math.sqrt(random.random() * 80) + 1)
     #result = db.session.execute("SELECT COUNT(*) FROM ingredients")
     #count = result.fetchone()[0]
@@ -232,7 +240,8 @@ def generaterecipepost():
     #if cheapestprice > 0:
         #morestuffamount = weighedrecipe[cheapestindex]
         #TODO add more stuff to the list to better utilize budget
-
+    if len(weighedrecipe) == 0:
+        return redirect("index.html", error="Ostoslistaa ei voitu muodostaa. Yritä höllentää kriteerejäsi")
     return render_template("showrecipe.html", items = weighedrecipe, totalprice = totalprice, count = rowcount)
     #return str(ingredient_amount)
 
@@ -262,26 +271,30 @@ def showexistingrecipe(id):
 def sendrecipe():
     if users.loggedin() == False:
         return render_template("index.html", error="Tämä ominaisuus on vain kirjautuneille käyttäjille")
-    ic = request.form["count"]
-    ingredientcount = int(ic)
-    name = request.form["name"]
+    try:
+        ic = request.form["count"]
+        ingredientcount = int(ic)
+        name = request.form["name"]
 
-    sql = "INSERT INTO recipes (name) VALUES (:name) RETURNING id; "
-    result = db.session.execute(sql, {"name":name})
-    recipe_id = result.fetchone()[0]
-    sql = "INSERT INTO recipes_ingredients (recipe_id, ingredient_id, count) VALUES "
+        sql = "INSERT INTO recipes (name) VALUES (:name) RETURNING id; "
+        result = db.session.execute(sql, {"name":name})
+        recipe_id = result.fetchone()[0]
+        sql = "INSERT INTO recipes_ingredients (recipe_id, ingredient_id, count) VALUES "
 
-    for x in range(ingredientcount):
-        i = str(x + 1)
-        id = str(int(request.form["hiddenId" + i]))
-        count = str(int(request.form["hiddenCount" + i]))
-        sql += (" (" + ":recipe_id, " + id + ", " + count + ")")
-        if(x < (ingredientcount - 1)):
-            sql += ","
+        for x in range(ingredientcount):
+            i = str(x + 1)
+            id = str(int(request.form["hiddenId" + i]))
+            count = str(int(request.form["hiddenCount" + i]))
+            sql += (" (" + ":recipe_id, " + id + ", " + count + ")")
+            if(x < (ingredientcount - 1)):
+                sql += ","
 
-    db.session.execute(sql, {"recipe_id":recipe_id})
-    db.session.commit()
-    return render_template("index.html", message = "Ostoslista tallennettu")
+        db.session.execute(sql, {"recipe_id":recipe_id})
+        db.session.commit()
+        return render_template("index.html", message = "Ostoslista tallennettu")
+    except:
+        return render_template("index.html", error = "Tapahtui virhe. Annathan ostoslistalle nimen, ja sellaisen, joka ei ole ennestään käytössä")
+
 
 @app.route("/recipes")
 def recipes():
