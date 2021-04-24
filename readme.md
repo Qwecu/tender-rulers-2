@@ -1,8 +1,23 @@
 # GourmetHelper
 
-Ohjelman tarkoituksena on luoda käyttäjälle ostoslistoja valittujen parametrien mukaan. Tiestokantaan on tallennettu erilaisten ruoka-aineiden hintoja ja ravintosisältöjä, käyttäjä ilmoittaa haluamansa budjetin, ja ohjelma tuottaa hänelle satunnaisen ostoslistan ja kertoo tietoja sen energia- ja ravintoainesisällöstä. Ostoslistat on mahdollista tallentaa myöhempää käyttöä varten. Käyttäjä voi myös lisätä, poistaa ja muokata ruoka-aineita tietokannassa.
+Tämän hetken toteutettu toiminnallisuus:
 
-Kehitysehdotuksia: muita rajauksia, kuten vegaaninen lista, inhokkiruokien poissulkeminen, ravintoainesisältöjen käyttö haun parametreinä...
+-Käyttäjä voi kirjautua (ja rekisteröityä samalla)
 
+-Käyttäjä voi kirjautua ulos
 
-Tällä hetkellä ohjemasta on omalla koneellani toimiva pohja. Herokussa oosoite on https://gourmethelper.herokuapp.com/, mutta en ole saanut tietokantayhteyttä toimimaan, joten siellä ohjelmaa ei pääse testaamaan.
+-Tietokannassa olevat ruoka-aineet saa listattua
+
+-Tietokannassa olevat ostoslistat saa listattua
+
+-Yksittäistä tallennettua ostoslistaa voi tarkastella
+
+-Ruoka-aineita voi lisätä tietokantaan: ruoka-aineesta tallennetaan nimi, hinta, pakkauskoko ja pakkauskoon yksikkö. Ohjelma laskee yksikköhinnan.
+
+-Ruoka-aineesta tallennetaan myös haluttu määrä filtteröiviä ominaisuuksia (vegaanisuus, ikärajavalvottu tuote)
+
+-Käyttäjä voi luoda satunnaisia ostoslistoja käyttäen parametreinä maksimihintaa sekä haluamiaan filttereitä
+
+-Käyttäjä voi tallentaa generoidun ostoslistan tietokantaan ja antaa sille nimen
+
+-Ohjelmaa voi testata Herokussa osoitteessa https://gourmethelper.herokuapp.com/
