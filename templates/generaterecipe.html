@@ -5,5 +5,9 @@
 <p>Budjetti:<br>
 <input type="text" name="budget"></p>
 <input type="submit" value="Luo uusi resepti">
+Lisäehdot:
+{% for filter in filters %}
+<input type="checkbox" name="filtercheck" value ={{filter[0]}}> {{filter[1]}}
+{% endfor %}
 </form>
 {% endblock %}

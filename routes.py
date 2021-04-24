@@ -139,7 +139,9 @@ def logout():
 
 @app.route("/generaterecipe")
 def generaterecipe():
-    return render_template("generaterecipe.html")
+    result = db.session.execute("select id, name from filter")
+    filters = result.fetchall()
+    return render_template("generaterecipe.html", filters = filters)
 
 @app.route("/generaterecipepost", methods=["POST"])
 def generaterecipepost():
@@ -148,6 +150,17 @@ def generaterecipepost():
     #result = db.session.execute("SELECT COUNT(*) FROM ingredients")
     #count = result.fetchone()[0]
     strjoin = ""
+    strwhere = ""
+
+    filters = request.form.getlist("filtercheck")
+
+    if(len(filters)) > 0:
+        strwhere = "WHERE 1 = 1 "
+        for id in filters:
+            filterid = str(int(id))
+            alias = "al" + filterid
+            strjoin = "	INNER JOIN filter_ingredient " + alias + " ON " + alias + ".ingredient_id = ingredients.id "
+            strwhere += "AND " + alias + ".filter_id = " + filterid + " "
 
     strj = "	INNER JOIN filter_ingredient a1 ON a1.ingredient_id = ingredients.id "
 
@@ -157,6 +170,7 @@ def generaterecipepost():
         " SELECT DISTINCT 1 + trunc(random() *  " + \
         "   (select COUNT(*) from ingredients " + \
         strjoin + \
+        strwhere + \
         "	) " + \
         " )::integer AS id " + \
         " FROM   generate_series(1, :max_ingredient_amount) g " + \
@@ -165,6 +179,7 @@ def generaterecipepost():
         "( " + \
         "select ROW_NUMBER () OVER (ORDER BY id) as id, ingredient, id as originalid, price from ingredients " + \
         strjoin + \
+        strwhere + \
         ") validfoods " + \
         "USING (id) " \
         "ORDER BY id; "
