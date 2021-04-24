@@ -42,3 +42,8 @@ def user_exists(username):
     sql = "SELECT * FROM users WHERE username=:username"
     result = db.session.execute(sql, {"username":username})
     return result.fetchone() != None
+
+def loggedin():
+    if session.get("username"):
+        return True
+    return False

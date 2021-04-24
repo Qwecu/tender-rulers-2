@@ -92,6 +92,8 @@ def newingredient():
 
 @app.route("/sendingredient", methods=["POST"])
 def sendingredient():
+    if users.loggedin() == False:
+        return render_template("index.html", error="Tämä ominaisuus on vain kirjautuneille käyttäjille")
     ingredient = request.form["ingredient"]
     price = request.form["price"]
     amount = request.form["amount"]
@@ -129,6 +131,7 @@ def login():
         return redirect("/")
     elif error_message == "No such user":
         users.register(username, password)
+        return render_template("index.html", message="Sinut on nyt rekisteröity käyttäjäksi")
     else:
         return render_template("index.html", error=error_message)
 
@@ -145,6 +148,9 @@ def generaterecipe():
 
 @app.route("/generaterecipepost", methods=["POST"])
 def generaterecipepost():
+    print("generaterecipepost")
+    if users.loggedin() == False:
+        return render_template("index.html", error="Tämä ominaisuus on vain kirjautuneille käyttäjille")
     budget = float(request.form["budget"])
     max_ingredient_amount = int(math.sqrt(random.random() * 80) + 1)
     #result = db.session.execute("SELECT COUNT(*) FROM ingredients")
@@ -254,6 +260,8 @@ def showexistingrecipe(id):
 
 @app.route("/sendrecipe", methods=["POST"])
 def sendrecipe():
+    if users.loggedin() == False:
+        return render_template("index.html", error="Tämä ominaisuus on vain kirjautuneille käyttäjille")
     ic = request.form["count"]
     ingredientcount = int(ic)
     name = request.form["name"]
