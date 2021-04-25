@@ -116,7 +116,7 @@ def sendingredient():
                 sql += "("
                 sql += str(int(id))
                 sql += ", :ingredientid)"
-            sql.replace(")(", "), (")
+            sql = sql.replace(")(", "), (")
             db.session.execute(sql,{"ingredientid":ingredientid})
 
 

@@ -59,6 +59,7 @@ name TEXT NOT NULL UNIQUE CHECK (name <> '')
 
 insert into filter (name) values ('vegaaninen');
 insert into filter (name) values ('K-18');
+insert into filter (name) values ('ei lisättyä sokeria');
 
 CREATE TABLE filter_ingredient (
 filter_id INT NOT NULL REFERENCES filter(id),
@@ -68,3 +69,7 @@ ingredient_id INT NOT NULL REFERENCES ingredients(id)
 insert into filter_ingredient (filter_id, ingredient_id) VALUES (1, 2);
 insert into filter_ingredient (filter_id, ingredient_id) VALUES (1, 5);
 insert into filter_ingredient (filter_id, ingredient_id) VALUES (2, 3);
+insert into filter_ingredient (filter_id, ingredient_id) VALUES (3, 2);
+insert into filter_ingredient (filter_id, ingredient_id) VALUES (3, 3);
+insert into filter_ingredient (filter_id, ingredient_id) VALUES (3, 4);
+insert into filter_ingredient (filter_id, ingredient_id) VALUES (3, 5);
