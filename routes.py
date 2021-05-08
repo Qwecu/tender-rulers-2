@@ -305,3 +305,7 @@ def recipes():
     """)
     recipes = result.fetchall()
     return render_template("recipes.html", count=count, recipes=recipes)
+
+@app.route("/csstesti")
+def csstesti():
+    return render_template("csstesti.html",)

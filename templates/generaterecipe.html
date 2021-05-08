@@ -4,10 +4,18 @@
 <form action="/generaterecipepost" method="POST">
 <p>Budjetti:<br>
 <input type="text" name="budget"></p>
-<input type="submit" value="Luo uusi resepti">
+
 Lisäehdot:
 {% for filter in filters %}
-<input type="checkbox" name="filtercheck" value ={{filter[0]}}> {{filter[1]}}
+<p>
+    <label>
+        <input type="checkbox" name="filtercheck" value ={{filter[0]}}> <span>{{filter[1]}}</span>
+    </label>
+</p>
+<br>
 {% endfor %}
+<button class="btn waves-effect waves-light" type="submit" name="action">Luo uusi resepti
+    <i class="material-icons right">send</i>
+</button>
 </form>
 {% endblock %}

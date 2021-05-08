@@ -1,23 +1,69 @@
 <!doctype html>
-<title>Gourmet Helper - {% block title %}{% endblock %}</title>
-<h1>Gourmet Helper</h1>
-<a href="/">Etusivu</a>
-{% if session.username %}
-<p>Olet kirjautunut nimellä {{ session.username }}</p>
-<a href="/logout">Kirjaudu ulos</a>
-<a href="/generaterecipe">Luo ostoslista</a>
-<a href="/listingredients">Näytä tietokannassa olevat ruoka-aineet ja lisää uusia</a>
-{%endif%}
-<a href="/recipes">Selaa ostoslistoja</a>
-{%if not session.username %}
-<form action="/login" method="POST">
-<p>Tunnus:<br>
-<input type="text" name="username"></p>
-<p>Salasana:<br>
-<input type="password" name="password"></p>
-<input type="submit" value="Kirjaudu">
-</form>
-{% endif %}
-<hr>
-{% block content %}{% endblock %}
-<hr>
+<html>
+    <head>
+        <!--Import Google Icon Font-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+  
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+          <!-- CSS  -->
+        <link href="static/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+        <link href="static/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+        <title>Gourmet Helper - {% block title %}{% endblock %}</title>
+        <h1 class="header center orange-text">Gourmet Helper</h1>
+      </head>
+<body>
+    <div class="container">
+        <a href="/">Etusivu</a>
+        {% if session.username %}
+
+        <p>Olet kirjautunut nimellä {{ session.username }}</p>
+        <nav class="nav-extended">
+            <!-- <div class="nav-wrapper">
+                <a href="/" class="brand-logo">Gouh</a>
+            </div> -->
+            <div class="nav-content">
+                <ul class="tabs tabs-transparent">
+                <li class="tab"><a href="/generaterecipe">Luo ostoslista</a></li>
+                <li class="tab"><a href="/listingredients">Ruoka-aineet</a></li>
+                <li class="tab"><a href="/newingredient">Lisää ruoka-aine</a></li>
+                <li class="tab"><a href="/recipes">Selaa ostoslistoja</a></li>
+                <li class="tab"><a href="/logout">Kirjaudu ulos</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        {%endif%}
+
+        {%if not session.username %}
+        <nav class="nav-extended">
+            <!-- <div class="nav-wrapper">
+                <a href="/" class="brand-logo">Gouh</a>
+            </div> -->
+            <div class="nav-content">
+                <ul class="tabs tabs-transparent">
+                <li class="tab"><a href="/recipes">Selaa ostoslistoja</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <form action="/login" method="POST">
+        <p>Tunnus:<br>
+        <input type="text" name="username"></p>
+        <p>Salasana:<br>
+        <input type="password" name="password"></p>
+        <button class="btn waves-effect waves-light" type="submit" name="action">Kirjaudu
+            <i class="material-icons right">send</i>
+        </button>
+        </form>
+        {% endif %}
+        <hr>
+        {% block content %}{% endblock %}
+        <hr>
+        <!--JavaScript at end of body for optimized loading-->
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+    </div>
+</body>
+</html>
