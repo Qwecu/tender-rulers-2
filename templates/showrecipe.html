@@ -4,6 +4,7 @@
 
 {% if recipe_name %}
 <h2>{{recipe_name}}</h2>
+<form>
 {%else%}
 <h2>Luo uusi ostoslista</h2>
 <form action="/sendrecipe" method="POST">
@@ -29,7 +30,5 @@ Kokonaishinta: {{totalprice}}
 <input id="hiddenCount{{item[5]}}" name="hiddenCount{{item[5]}}" type="hidden" value={{ item[4] }}>
 <input id="hiddenId{{item[5]}}" name="hiddenId{{item[5]}}" type="hidden" value={{ item[2] }}>
 {% endfor %}
-{% if recipe_name %}
-</form>
-{%endif%}
+
 {% endblock %}

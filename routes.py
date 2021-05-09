@@ -173,7 +173,7 @@ def generaterecipepost():
         for id in filters:
             filterid = str(int(id))
             alias = "al" + filterid
-            strjoin = "	INNER JOIN filter_ingredient " + alias + " ON " + alias + ".ingredient_id = ingredients.id "
+            strjoin += "	INNER JOIN filter_ingredient " + alias + " ON " + alias + ".ingredient_id = ingredients.id "
             strwhere += "AND " + alias + ".filter_id = " + filterid + " "
 
     strj = "	INNER JOIN filter_ingredient a1 ON a1.ingredient_id = ingredients.id "
