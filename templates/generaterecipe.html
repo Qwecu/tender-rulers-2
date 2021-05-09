@@ -17,5 +17,6 @@ Lisäehdot:
 <button class="btn waves-effect waves-light" type="submit" name="action">Luo uusi resepti
     <i class="material-icons right">send</i>
 </button>
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
 {% endblock %}

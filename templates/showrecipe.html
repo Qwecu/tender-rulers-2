@@ -14,6 +14,7 @@ Anna ostoslistalle nimi:
     <i class="material-icons right">send</i>
 </button>
 <input id="count" name="count" type="hidden" value={{count}}>
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 {%endif%}
 <hr>
 Kokonaishinta: {{totalprice}}
@@ -30,5 +31,5 @@ Kokonaishinta: {{totalprice}}
 <input id="hiddenCount{{item[5]}}" name="hiddenCount{{item[5]}}" type="hidden" value={{ item[4] }}>
 <input id="hiddenId{{item[5]}}" name="hiddenId{{item[5]}}" type="hidden" value={{ item[2] }}>
 {% endfor %}
-
+</form>
 {% endblock %}

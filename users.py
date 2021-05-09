@@ -47,3 +47,6 @@ def loggedin():
     if session.get("username"):
         return True
     return False
+
+def csrf():
+    return session["csrf_token"]

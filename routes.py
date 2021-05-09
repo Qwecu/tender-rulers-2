@@ -8,67 +8,11 @@ from db import db
 import users
 import random
 import math
-#app.secret_key = getenv("SECRET_KEY")
 
-
-
-#app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
-
-#db = SQLAlchemy(app)
-
-
-
-@app.route("/po")
-def po():
-        return "Etusivu! Kiva nähdä!"
-
-
-
-@app.route("/page1")
-def page1():
-    return "Tämä on sivu 1"
-
-@app.route("/page2")
-def page2():
-    return "Tämä on sivu 2"
-
-
-@app.route("/test")
-def test():
-    content = ""
-    for i in range(1,101):
-        content += str(i)+" "
-    return content
-
-@app.route("/page/<int:id>")
-def page(id):
-    return "Tämä on sivu " + str(id)
-
-
-
-@app.route("/form")
-def form():
-    return render_template("form.html")
-
-@app.route("/result", methods=["POST"])
-def result():
-    return render_template("result.html",name=request.form["name"])
 
 @app.route("/")
 def index():
     return render_template("index.html")
-
-@app.route("/new")
-def new():
-    return render_template("new.html")
-
-@app.route("/send", methods=["POST"])
-def send():
-    content = request.form["content"]
-    sql = "INSERT INTO messages (content) VALUES (:content)"
-    db.session.execute(sql, {"content":content})
-    db.session.commit()
-    return redirect("/")
 
 @app.route("/listingredients")
 def listingredients():
@@ -94,6 +38,9 @@ def newingredient():
 def sendingredient():
     if users.loggedin() == False:
         return render_template("index.html", error="Tämä ominaisuus on vain kirjautuneille käyttäjille")
+    if users.csrf() != request.form["csrf_token"]:
+        abort(403)
+
     ingredient = request.form["ingredient"]
     price = request.form["price"]
     amount = request.form["amount"]
@@ -153,6 +100,8 @@ def generaterecipe():
 def generaterecipepost():
     if users.loggedin() == False:
         return render_template("index.html", error="Tämä ominaisuus on vain kirjautuneille käyttäjille")
+    if users.csrf() != request.form["csrf_token"]:
+        abort(403)
     try:
         budget = float(request.form["budget"])
     except:
@@ -218,9 +167,6 @@ def generaterecipepost():
     cheapestprice = 0
     weighedrecipe = []
 
-    #return "weightsum " + str(weightsum) + " reco " + str(reco) + " modifier " + str(modifier)
-    test = "TEST: "
-
     currentindex = 0
     for food in recipe:
         if food[3] < cheapestprice or cheapestprice == 0:
@@ -271,6 +217,10 @@ def showexistingrecipe(id):
 def sendrecipe():
     if users.loggedin() == False:
         return render_template("index.html", error="Tämä ominaisuus on vain kirjautuneille käyttäjille")
+
+    if users.csrf() != request.form["csrf_token"]:
+        abort(403)
+        
     try:
         ic = request.form["count"]
         ingredientcount = int(ic)
@@ -305,7 +255,3 @@ def recipes():
     """)
     recipes = result.fetchall()
     return render_template("recipes.html", count=count, recipes=recipes)
-
-@app.route("/csstesti")
-def csstesti():
-    return render_template("csstesti.html",)
