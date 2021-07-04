@@ -255,3 +255,11 @@ def recipes():
     """)
     recipes = result.fetchall()
     return render_template("recipes.html", count=count, recipes=recipes)
+
+@app.route("/map")
+def map():
+    return render_template("kartta.html")
+
+@app.route("/devblog")
+def devblog():
+    return render_template("devblog.html")

@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block title %}Map of the known world{% endblock %}
+{% block content %}
+
+
+<div id="map"></div>
+
+<script>
+
+// initialize the map
+var map = L.map('map');
+map.locate({setView: true, maxZoom: 16});
+
+// load a tile layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 17,
+    minZoom: 1
+  }).addTo(map);
+
+
+
+</script>
+<form action="/createcastle" method="POST">
+Create a new and mighty castle named...:
+<input type="text" name="castle">
+<br>
+
+<button class="btn waves-effect waves-light" type="submit" name="action">Create castle
+    <i class="material-icons right">send</i>
+</button>
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+</form>
+
+{% endblock %}
+
+
