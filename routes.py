@@ -6,6 +6,7 @@ from os import getenv
 
 from db import db
 import users
+import castles
 import random
 import math
 
@@ -258,8 +259,47 @@ def recipes():
 
 @app.route("/map")
 def map():
-    return render_template("kartta.html")
+    sql = "SELECT id, userid, name, lat, lng, diameter FROM CASTLES "
+    oldcastles = db.session.execute(sql)
+
+    return render_template("kartta.html", oldcastles=oldcastles)
 
 @app.route("/devblog")
 def devblog():
     return render_template("devblog.html")
+
+@app.route("/createcastle", methods=["POST"])
+def createcastle():
+    
+
+    if users.loggedin() == False:
+        return render_template("index.html", error="Tämä ominaisuus on vain kirjautuneille käyttäjille")
+
+
+    if users.csrf() != request.form["csrf_token"]:
+        abort(403)
+        
+    try:
+        print("cc")
+        lat = float(request.form["lat"])
+        lng = float(request.form["lng"])
+        name = request.form["castle"]
+
+        if name == "":
+            return render_template("index.html", error = "Your castle must have a name!")
+
+        print("saa")
+
+        approved = castles.newCastleOk(lat, lng, users.userid())
+
+        if (approved == "True"):
+            sql = "INSERT INTO castles(name, userid, lat, lng, diameter) VALUES(:name, :userid, :lat, :lng, 500)  " 
+            print("test")
+            print(users.userid())
+            result = db.session.execute(sql, {"name":request.form["castle"], "userid":users.userid(), "lat":lat, "lng":lng })
+            db.session.commit()
+            return render_template("index.html", message = "New castle created! Let it be glorious!")
+        else :
+            return render_template("index.html", error = approved)
+    except:
+        return render_template("index.html", error = "Tapahtui virhe.")

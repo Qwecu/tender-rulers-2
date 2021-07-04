@@ -50,3 +50,6 @@ def loggedin():
 
 def csrf():
     return session["csrf_token"]
+
+def userid():
+    return int(session["user_id"])
